@@ -47,5 +47,7 @@ class QuotesSpider(scrapy.Spider):
 		# Handy for crawling sites with pagination
 		next_page = response.css('li.next a::attr(href)').get()
 		if next_page is not None:
-			next_page = response.urljoin(next_page)
-			yield scrapy.Request(next_page, callback=self.parse)
+			'''next_page = response.urljoin(next_page)
+			yield scrapy.Request(next_page, callback=self.parse)'''
+			# Or use response.follow to support relative urls directly
+			yield response.follow(next_page, callback=self.parse)
