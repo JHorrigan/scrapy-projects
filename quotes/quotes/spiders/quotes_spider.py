@@ -27,8 +27,18 @@ class QuotesSpider(scrapy.Spider):
 	def parse(self, response):
 		# parse() usually parses response, extract scraped data as dicts,
 		# find new urls to follow and create new requests
-		page = response.url.split("/")[-2]
+		
+		# Simple HTML extraction to file
+		'''page = response.url.split("/")[-2]
 		filename = 'quotes-%s.html' % page
 		with open(filename, 'wb') as f:
 			f.write(response.body)
-		self.log('Saved file %s' % filename)
+		self.log('Saved file %s' % filename)'''
+
+		# Extract specific data
+		for quote in response.css('div.quote'):
+			yield {
+				'text': quote.css('span.text::text').get(),
+				'author': quote.css('small.author::text').get(),
+				'tags': quote.css('div.tags a.tag::text').getall(),
+			}
